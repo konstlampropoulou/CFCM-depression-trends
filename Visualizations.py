@@ -5,16 +5,7 @@ import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
 import pickle
 
-with open('training_robust.pkl', 'rb') as f:
-    training_data = pickle.load(f)
 
-all_results_by_activation = training_data['all_results_by_activation']
-best_activation = "exponential"
-best_results = all_results_by_activation[best_activation]["best_results"]
-best_rule = min(best_results.keys(), key=lambda r: best_results[r]['best_mse'])
-x_data = all_results_by_activation[best_activation]["x_data"]
-labels = all_results_by_activation[best_activation]["labels"]
-t_eval = all_results_by_activation[best_activation]["years"]
 
 def create_gender_separated_plot_pdf(t_eval, x_original, all_results_by_activation, labels,
                                      best_activation='exponential',
