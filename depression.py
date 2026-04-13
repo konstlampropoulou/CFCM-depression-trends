@@ -257,46 +257,6 @@ def sensitivity_analysis(file_path, best_W, best_b, activation_func='exponential
 
     return importance, polarity
 
-def future_prediction_test(file_path, activation_func='exponential', rule='continuous', beta=2.5):
-    all_years, years, _ = load_depression_data(file_path, activation_func)
-    
-    past_data = all_years[:-2, :]     
-    true_future = all_years[-2:, :]
-    
-    
-    
-    model_W, model_b, _ = train_fcm(past_data, n_repetitions=15, rule=rule, 
-                                     activation_func=activation_func, beta=beta)
-    
-    time_steps = np.arange(len(all_years))
-    full_forecast = simulate_fcm(past_data[0], model_W, model_b, time_steps, 
-                                  rule=rule, activation_func=activation_func, beta=beta)
-    
-    our_forecast = full_forecast[-2:, :]
-    
-    years_idx = np.arange(len(past_data))
-    trend_forecast = np.zeros((2, all_years.shape[1]))
-    for i in range(all_years.shape[1]):
-        slope, intercept = np.polyfit(years_idx, past_data[:, i], 1)
-        trend_forecast[0, i] = slope * len(past_data) + intercept
-        trend_forecast[1, i] = slope * (len(past_data) + 1) + intercept
-    
-    cfcm_mae = np.mean(np.abs(true_future - our_forecast))
-    cfcm_rmse = np.sqrt(np.mean((true_future - our_forecast)**2))
-    
-    linear_mae = np.mean(np.abs(true_future - trend_forecast))
-    linear_rmse = np.sqrt(np.mean((true_future - trend_forecast)**2))
-    
-    print(f"{'MAE'}:{cfcm_mae:.6f}, {linear_mae:.6f}")
-    print(f"{'RMSE'}:{cfcm_rmse:.6f}, {linear_rmse:.6f}")
-    
-
-    return {
-        'cfcm_mae': cfcm_mae,
-        'linear_mae': linear_mae,
-        'cfcm_rmse': cfcm_rmse,
-        'linear_rmse': linear_rmse
-    }
 
 
 
@@ -341,8 +301,6 @@ sensitivity_analysis(file_path, best_W, best_b,
                     activation_func='exponential', rule='continuous', beta=best_beta)
 
 
-future_prediction_test(file_path, activation_func='exponential', 
-                       rule='continuous', beta=best_beta)
 
 
 
